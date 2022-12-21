@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.SmallGameActivity">
+
+    <LinearLayout
+        android:layout_width="124dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:translationZ="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/game_IMG_life0"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/energy" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/game_IMG_life1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/energy" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/game_IMG_life2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/energy" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="@color/purple_500"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_weight="1">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_trainer0"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:visibility="visible"
+                    android:paddingRight="25dp"
+                    app:srcCompat="@drawable/pokemon_trainer2" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_trainer1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokemon_trainer2" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_trainer2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokemon_trainer2" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="9"
+            android:background="@color/teal_700"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_weight="2">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle0"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.35"
+                    android:scaleY="0.35"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.35"
+                    android:scaleY="0.35"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.35"
+                    android:scaleY="0.35"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_weight="2">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle4"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle5"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_weight="2">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle6"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.65"
+                    android:scaleY="0.65"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle7"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.65"
+                    android:scaleY="0.65"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle8"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.65"
+                    android:scaleY="0.65"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_weight="2">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle9"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle10"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle11"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_weight="2">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle12"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.35"
+                    android:scaleY="0.35"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle13"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.35"
+                    android:scaleY="0.35"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_obstacle14"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleX="0.35"
+                    android:scaleY="0.35"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pokeball" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_weight="2">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_player0"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pikachu" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_player1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pikachu" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/game_IMG_player2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pikachu" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/game_FAB_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        app:fabCustomSize="64dp"
+        app:maxImageSize="64dp"
+        app:srcCompat="@drawable/ic_baseline_arrow_left_24" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/game_FAB_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        app:fabCustomSize="64dp"
+        app:maxImageSize="64dp"
+        app:srcCompat="@drawable/ic_baseline_arrow_right_24" />
+
+
+</RelativeLayout>
