@@ -8,7 +8,7 @@ import android.os.Vibrator;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.pokerun_2.GameManager;
+import com.example.pokerun_2.Manager.GameManager;
 import com.example.pokerun_2.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;

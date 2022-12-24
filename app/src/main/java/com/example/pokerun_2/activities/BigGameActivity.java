@@ -10,11 +10,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.pokerun_2.BackgroundSound;
-import com.example.pokerun_2.GameManager;
+import com.example.pokerun_2.Manager.BackgroundSound;
+import com.example.pokerun_2.Manager.GameManager;
 import com.example.pokerun_2.R;
 import com.example.pokerun_2.StepCallback;
-import com.example.pokerun_2.TiltDetector;
+import com.example.pokerun_2.Manager.TiltDetector;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
@@ -37,7 +37,7 @@ public class BigGameActivity extends AppCompatActivity {
 
     private ArrayList<LinearLayout> game_LLO_lanes;
     private ArrayList<LinearLayout> game_LLO_lives;
-    private ArrayList<ShapeableImageView> game_IMG_obstacles;
+    private ArrayList<ShapeableImageView> game_IMG_objects;
     private ArrayList<ShapeableImageView> game_IMG_trainers;
     private ArrayList<ShapeableImageView> game_IMG_lives;
     private ArrayList<ShapeableImageView> game_IMG_players;
@@ -46,7 +46,7 @@ public class BigGameActivity extends AppCompatActivity {
 
     private TiltDetector tiltDetector;
 
-    private Timer timer = new Timer();
+    private Timer timer;
 
     private BackgroundSound mBackgroundSound;
     private Toast toaster;
@@ -67,7 +67,7 @@ public class BigGameActivity extends AppCompatActivity {
         findViews();
         gameManager = new GameManager(game_IMG_lives.size());
 
-        toaster = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+//        toaster = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
         Intent previousIntent = getIntent();
         buttonStatus = previousIntent.getBooleanExtra(BUTTON_STATUS, true);
@@ -75,8 +75,6 @@ public class BigGameActivity extends AppCompatActivity {
 
         initViews();
         setDelay();
-        refreshUI();
-        startGame();
     }
 
 
@@ -125,11 +123,11 @@ public class BigGameActivity extends AppCompatActivity {
         game_IMG_trainers.add(findViewById(R.id.game_IMG_trainer3));
         game_IMG_trainers.add(findViewById(R.id.game_IMG_trainer4));
 
-        game_IMG_obstacles = new ArrayList<>();
+        game_IMG_objects = new ArrayList<>();
         int rows = game_LLO_lanes.size(), cols = game_LLO_lanes.get(0).getChildCount();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                game_IMG_obstacles.add((ShapeableImageView) game_LLO_lanes.get(i).getChildAt(j));
+                game_IMG_objects.add((ShapeableImageView) game_LLO_lanes.get(i).getChildAt(j));
             }
         }
     }
@@ -204,7 +202,7 @@ public class BigGameActivity extends AppCompatActivity {
         updateScore();
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (gameManager.checkHit(v)) {
-            toast();
+            toast(gameManager.OBSTACLE_CODE);
         }
         gameManager.setHit(false);
         if (gameManager.isLose(v)) {
@@ -216,7 +214,7 @@ public class BigGameActivity extends AppCompatActivity {
 
     private void updateScore() {
         int score = gameManager.getScore();
-        score += (System.currentTimeMillis() - startTime) / delay;
+        score += (System.currentTimeMillis() - startTime) / delay;      // score over time
         game_LBL_score.setText("" + score);
     }
 
@@ -227,13 +225,13 @@ public class BigGameActivity extends AppCompatActivity {
             for (int j = 0; j < cols; j++) {
                 if (currentState[i][j] == GameManager.OBSTACLE_CODE) {
 //                    game_IMG_obstacles[i * cols + j];
-                    game_IMG_obstacles.get(i * cols + j).setVisibility(View.VISIBLE);
-                    game_IMG_obstacles.get(i * cols + j).setImageResource(R.drawable.pokeball);
+                    game_IMG_objects.get(i * cols + j).setVisibility(View.VISIBLE);
+                    game_IMG_objects.get(i * cols + j).setImageResource(R.drawable.pokeball);
                 } else if (currentState[i][j] == GameManager.EMPTY_CODE) {
-                    game_IMG_obstacles.get(i * cols + j).setVisibility(View.INVISIBLE);
+                    game_IMG_objects.get(i * cols + j).setVisibility(View.INVISIBLE);
                 } else if (currentState[i][j] == GameManager.SCORE_CODE) {
-                    game_IMG_obstacles.get(i * cols + j).setVisibility(View.VISIBLE);
-                    game_IMG_obstacles.get(i * cols + j).setImageResource(R.drawable.pokecoin);
+                    game_IMG_objects.get(i * cols + j).setVisibility(View.VISIBLE);
+                    game_IMG_objects.get(i * cols + j).setImageResource(R.drawable.pokecoin);
                 }
             }
         }
@@ -261,10 +259,14 @@ public class BigGameActivity extends AppCompatActivity {
         }
     }
 
-    private void toast() {
+    private void toast(int hitCode) {
         if (toaster != null)
             toaster.cancel();
-        String name = "Ouch!";
+        String name = "";
+        if(hitCode == gameManager.OBSTACLE_CODE)
+            name = "Ouch!";
+        else if (hitCode == gameManager.SCORE_CODE)
+            name = "Money!";
         toaster = Toast
                 .makeText(this, name, Toast.LENGTH_SHORT);
         toaster.show();
@@ -312,15 +314,7 @@ public class BigGameActivity extends AppCompatActivity {
         mBackgroundSound.execute();
         if(tiltDetector != null)
             tiltDetector.start();
+        startGame();
     }
-
-    //    private void OpenScoreScreen() {
-//        Intent scoreIntent = new Intent(this, ScoreActivity.class);
-//        scoreIntent.putExtra(ScoreActivity.KEY_SCORE, score);
-//        scoreIntent.putExtra(ScoreActivity.KEY_STATUS, status);
-//        startActivity(scoreIntent);
-//        finish();
-//    }
-
 
 }

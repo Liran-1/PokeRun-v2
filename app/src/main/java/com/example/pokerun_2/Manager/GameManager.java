@@ -1,4 +1,4 @@
-package com.example.pokerun_2;
+package com.example.pokerun_2.Manager;
 
 import android.os.Build;
 import android.os.VibrationEffect;

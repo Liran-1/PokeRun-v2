@@ -1,8 +1,10 @@
-package com.example.pokerun_2;
+package com.example.pokerun_2.Manager;
 
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
+
+import com.example.pokerun_2.R;
 
 public class BackgroundSound extends AsyncTask<Void, Void, Void> {
     private Context context;

@@ -1,10 +1,12 @@
-package com.example.pokerun_2;
+package com.example.pokerun_2.Manager;
 
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
+import com.example.pokerun_2.StepCallback;
 
 public class TiltDetector {
     private StepCallback stepCallback;
