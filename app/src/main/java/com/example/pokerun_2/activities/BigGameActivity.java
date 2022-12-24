@@ -1,9 +1,12 @@
 package com.example.pokerun_2.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
@@ -27,6 +30,7 @@ public class BigGameActivity extends AppCompatActivity {
 
     public static final String BUTTON_STATUS = "BUTTON_STATUS";
     public static final String SPEED_STATUS = "SPEED_STATUS";
+    public static final String USER_NAME = "USER_NAME";
 
     private boolean buttonStatus, speedStatus;
 
@@ -36,7 +40,6 @@ public class BigGameActivity extends AppCompatActivity {
     private MaterialTextView game_LBL_score;
 
     private ArrayList<LinearLayout> game_LLO_lanes;
-    private ArrayList<LinearLayout> game_LLO_lives;
     private ArrayList<ShapeableImageView> game_IMG_objects;
     private ArrayList<ShapeableImageView> game_IMG_trainers;
     private ArrayList<ShapeableImageView> game_IMG_lives;
@@ -45,17 +48,22 @@ public class BigGameActivity extends AppCompatActivity {
     private GameManager gameManager;
 
     private TiltDetector tiltDetector;
-
     private Timer timer;
-
     private BackgroundSound mBackgroundSound;
     private Toast toaster;
     private Vibrator v;
 
     private long startTime = System.currentTimeMillis();
-    private long millis;
 
-    private int delay = 750;
+    private final int SLOW_SPEED = 750;
+    private final int FAST_SPEED = 500;
+    private final int VERY_FAST_SPEED = 350;
+    private final String SLOW_SPEED_STR = "SLOW_SPEED_STR";
+    private final String FAST_SPEED_STR = "FAST_SPEED_STR";
+    private final String VERY_FAST_SPEED_STR = "VERY_FAST_SPEED_STR";
+    private int delay = SLOW_SPEED;
+    private String delayStatus = "";
+    private String userName;
 
 
     @Override
@@ -63,30 +71,21 @@ public class BigGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_big_game);
 
-//        savedInstanceState;
         findViews();
         gameManager = new GameManager(game_IMG_lives.size());
-
-//        toaster = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
         Intent previousIntent = getIntent();
         buttonStatus = previousIntent.getBooleanExtra(BUTTON_STATUS, true);
         speedStatus = previousIntent.getBooleanExtra(SPEED_STATUS, false);
+        userName = previousIntent.getStringExtra(USER_NAME);
 
         initViews();
-        setDelay();
+        setDelay(SLOW_SPEED_STR);
+        refreshUI();
     }
 
 
     //////SET GAME//////
-    private void setDelay() {
-        if (speedStatus){
-            delay = 375;
-        }
-        else{
-            delay = 750;
-        }
-    }
 
     private void findViews() {
 
@@ -145,6 +144,26 @@ public class BigGameActivity extends AppCompatActivity {
         changeButtonVisibility();
     }
 
+    private void setDelay(String speed) {
+        if (buttonStatus) {
+            if (speed.equals(SLOW_SPEED_STR)) {
+                delay = SLOW_SPEED;
+            }
+            if (speed.equals(FAST_SPEED_STR)) {
+                delay = FAST_SPEED;
+            }
+            if (speed.equals(VERY_FAST_SPEED_STR)) {
+                delay = VERY_FAST_SPEED;
+            }
+        } else {
+            if (speedStatus) {
+                delay = FAST_SPEED;
+            } else {
+                delay = SLOW_SPEED;
+            }
+        }
+    }
+
     private void changeButtonVisibility() {
         if (buttonStatus) {
             game_FAB_left.setVisibility(View.INVISIBLE);
@@ -166,6 +185,21 @@ public class BigGameActivity extends AppCompatActivity {
             public void tiltLeft() {
                 actionLeft();
             }
+
+            @Override
+            public void speedSlow() {
+                actionSpeed(SLOW_SPEED_STR);
+            }
+
+            @Override
+            public void speedFast() {
+                actionSpeed(FAST_SPEED_STR);
+            }
+
+            @Override
+            public void speedVeryFast() {
+                actionSpeed(VERY_FAST_SPEED_STR);
+            }
         });
     }
 
@@ -177,6 +211,24 @@ public class BigGameActivity extends AppCompatActivity {
     private void actionLeft() {
         gameManager.movePlayerLeft();
         updatePlayerPos();
+    }
+
+    private void actionSpeed(String speed) {
+        setDelay(speed);
+    }
+
+    // method to check for permissions
+    private boolean checkPermissions() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q)
+            return ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        else
+// If we want background location
+// on Android 10.0 and higher,
+// use:
+            return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
 
@@ -202,7 +254,7 @@ public class BigGameActivity extends AppCompatActivity {
         updateScore();
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (gameManager.checkHit(v)) {
-            toast(gameManager.OBSTACLE_CODE);
+            toast(GameManager.OBSTACLE_CODE);
         }
         gameManager.setHit(false);
         if (gameManager.isLose(v)) {
@@ -212,10 +264,16 @@ public class BigGameActivity extends AppCompatActivity {
 
     }
 
-    private void updateScore() {
-        int score = gameManager.getScore();
-        score += (System.currentTimeMillis() - startTime) / delay;      // score over time
-        game_LBL_score.setText("" + score);
+    private void updatePlayerPos() {                // update player position
+        int[][] currentState = gameManager.getCurrentState();
+        int rows = currentState.length, cols = currentState[0].length;
+        for (int i = 0; i < cols; i++) {
+            if (currentState[rows - 1][i] == GameManager.EMPTY_CODE) {
+                game_IMG_players.get(i).setVisibility(View.INVISIBLE);
+            } else if (currentState[rows - 1][i] == GameManager.PLAYER_CODE) {
+                game_IMG_players.get(i).setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void updateObjPos() {                   // update object position
@@ -237,43 +295,37 @@ public class BigGameActivity extends AppCompatActivity {
         }
     }
 
-    private void updatePlayerPos() {                // update player position
-        int[][] currentState = gameManager.getCurrentState();
-        int rows = currentState.length, cols = currentState[0].length;
-        for (int i = 0; i < cols; i++) {
-            if (currentState[rows - 1][i] == GameManager.EMPTY_CODE) {
-                game_IMG_players.get(i).setVisibility(View.INVISIBLE);
-            } else if (currentState[rows - 1][i] == GameManager.PLAYER_CODE) {
-                game_IMG_players.get(i).setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
     private void updateTrainerPos() {
         int[][] currentState = gameManager.getCurrentState();
         for (int i = 0; i < currentState[0].length; i++) {
             if (currentState[0][i] == GameManager.OBSTACLE_CODE)
                 game_IMG_trainers.get(i).setVisibility(View.VISIBLE);
-            else if (currentState[0][i] == GameManager.EMPTY_CODE)
+            else
                 game_IMG_trainers.get(i).setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void updateScore() {
+        int score = gameManager.getScore();
+        score += (System.currentTimeMillis() - startTime) / delay;      // score over time
+        game_LBL_score.setText(score);
     }
 
     private void toast(int hitCode) {
         if (toaster != null)
             toaster.cancel();
-        String name = "";
-        if(hitCode == gameManager.OBSTACLE_CODE)
-            name = "Ouch!";
-        else if (hitCode == gameManager.SCORE_CODE)
-            name = "Money!";
+        String message = "";
+        if (hitCode == GameManager.OBSTACLE_CODE)
+            message = "Ouch!";
+        else if (hitCode == GameManager.SCORE_CODE)
+            message = "Money!";
         toaster = Toast
-                .makeText(this, name, Toast.LENGTH_SHORT);
+                .makeText(this, message, Toast.LENGTH_SHORT);
         toaster.show();
     }
 
 
-    ///////CHANGE SCREENS///////
+    //////CHANGE SCREENS//////
     private void openScoreScreen(String status, int score) {
         Intent scoreIntent = new Intent(this, ScoreActivity.class);
         scoreIntent.putExtra(ScoreActivity.KEY_SCORE, score);
@@ -283,38 +335,37 @@ public class BigGameActivity extends AppCompatActivity {
     }
 
 
-    ///////ON PHONE ACTION//////
+    //////ON PHONE ACTION//////
     @Override
     protected void onStop() {
-        super.onStop();
         timer.cancel();
         v.cancel();
         toaster.cancel();
         mBackgroundSound.cancel(true);
-        if(tiltDetector != null)
+        if (tiltDetector != null)
             tiltDetector.stop();
+        super.onStop();
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
         timer.cancel();
         v.cancel();
         toaster.cancel();
         mBackgroundSound.cancel(true);
-        if(tiltDetector != null)
+        if (tiltDetector != null)
             tiltDetector.stop();
+        super.onPause();
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
-        timer = new Timer();
         mBackgroundSound = new BackgroundSound(this);
         mBackgroundSound.execute();
-        if(tiltDetector != null)
+        if (tiltDetector != null)
             tiltDetector.start();
         startGame();
+        super.onResume();
     }
 
 }

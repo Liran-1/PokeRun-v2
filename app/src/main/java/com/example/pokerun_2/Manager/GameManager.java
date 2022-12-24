@@ -9,24 +9,25 @@ import java.util.Random;
 
 public class GameManager {
 
-    public static final int EMPTY_CODE = 0;
-    public static final int PLAYER_CODE = 1;
-    public static final int OBSTACLE_CODE = 2;
-    public static final int SCORE_CODE = 3;
+    public static final int EMPTY_CODE      = 0;
+    public static final int PLAYER_CODE     = 1;
+    public static final int OBSTACLE_CODE   = 2;
+    public static final int SCORE_CODE      = 3;
 
     public static final int SCORE_CODE_POINTS = 10;
 
-    private int score = 0;
+    private int score   = 0;
     private int lives;
-    private int hits = 0;
+    private int hits    = 0;
 
     private final int lanes = 5;
-    private final int rows = 8;
+    private final int rows  = 8;
 
-    private int[][] currentState = new int[rows][lanes];
-    private int currentPlayerIndex = lanes / 2;
+    private int[][] currentState    = new int[rows][lanes];
+    private int currentPlayerIndex  = lanes / 2;
 
     private int obstacleCounter = lanes - 1;        // to make sure user isn't blocked
+
     private boolean hit = false;
 
     public GameManager(int lives) {

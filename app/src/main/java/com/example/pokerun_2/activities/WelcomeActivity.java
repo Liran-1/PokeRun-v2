@@ -4,11 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.pokerun_2.Manager.BackgroundSound;
 import com.example.pokerun_2.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -19,6 +22,12 @@ public class WelcomeActivity extends AppCompatActivity {
     private SwitchMaterial welcome_SWT_gameMode;
     private SwitchMaterial welcome_SWT_buttons;
     private SwitchMaterial welcome_SWT_fast;
+    private TextInputEditText welcome_ETXT_name;
+
+    private Toast toaster;
+
+    private int annoyedCounter = 5;         //joke
+    private String annoyedUsername = "Loser";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +44,28 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void clickedStart() {
-
-        Intent startIntent = new Intent(WelcomeActivity.this, BigGameActivity.class);
-        startIntent.putExtra(BigGameActivity.BUTTON_STATUS, welcome_SWT_buttons.isChecked());
-        startIntent.putExtra(BigGameActivity.SPEED_STATUS, welcome_SWT_fast.isChecked());
-        startActivity(startIntent);
+        String username = "";
+        if (welcome_ETXT_name.getText() == null) {
+            annoyedCounter--;
+            if (toaster != null)
+                toaster.cancel();
+            String message = "Enter your name!";
+            toaster = Toast
+                    .makeText(this, message, Toast.LENGTH_SHORT);
+            toaster.show();
+        } else if (annoyedCounter == 0) {
+            username = annoyedUsername;
+        } else {
+            if (!username.equals(annoyedUsername))
+                username = welcome_ETXT_name.getText().toString();
+            Intent startIntent = new Intent(WelcomeActivity.this,
+                    BigGameActivity.class);
+            startIntent.putExtra(BigGameActivity.BUTTON_STATUS, welcome_SWT_buttons.isChecked());
+            startIntent.putExtra(BigGameActivity.SPEED_STATUS, welcome_SWT_fast.isChecked());
+            startIntent.putExtra(BigGameActivity.USER_NAME, username);
+            startActivity(startIntent);
+            finish();
+        }
     }
 
     private void clickedHighScore() {
@@ -48,6 +74,7 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void findViews() {
+        welcome_ETXT_name = findViewById(R.id.welcome_ETXT_name);
         welcome_BTN_start = findViewById(R.id.welcome_BTN_start);
         welcome_BTN_highscore = findViewById(R.id.welcome_BTN_highscore);
         welcome_SWT_buttons = findViewById(R.id.welcome_SWT_buttons);
@@ -56,7 +83,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void openGameScreen(String status, int score) {
         String gameMode = "big";
-        if(welcome_SWT_gameMode.isActivated()){
+        if (welcome_SWT_gameMode.isActivated()) {
             gameMode = "small";
         }
         Intent scoreIntent = new Intent(this, ScoreActivity.class);

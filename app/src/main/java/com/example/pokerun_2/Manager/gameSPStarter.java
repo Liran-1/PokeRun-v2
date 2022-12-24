@@ -7,8 +7,6 @@ public class gameSPStarter extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         gameSP.init(this);
-
     }
 }

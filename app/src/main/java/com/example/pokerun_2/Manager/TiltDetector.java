@@ -29,8 +29,9 @@ public class TiltDetector {
             @Override
             public void onSensorChanged(SensorEvent event) {
                 float x = event.values[0];
+                float y = event.values[1];
 
-                calculateStep(x);
+                calculateStep(x, y);
             }
 
             @Override
@@ -40,7 +41,7 @@ public class TiltDetector {
         };
     }
 
-    private void calculateStep(float x) {
+    private void calculateStep(float x, float y) {
         if (System.currentTimeMillis() - timestamp > 150) {
             timestamp = System.currentTimeMillis();
             if (x < -3.0) {
@@ -50,6 +51,18 @@ public class TiltDetector {
             if (x > 3.0) {
                 if (stepCallback != null)
                     stepCallback.tiltLeft();
+            }
+            if(y > 0.0 && y < 3.0){
+                if (stepCallback != null)
+                    stepCallback.speedSlow();
+            }
+            if(y > 3.0 && y < 6.0){
+                if (stepCallback != null)
+                    stepCallback.speedFast();
+            }
+            if(y > 6.0){
+                if (stepCallback != null)
+                    stepCallback.speedVeryFast();
             }
         }
     }
