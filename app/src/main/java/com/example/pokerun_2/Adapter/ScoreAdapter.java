@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pokerun_2.R;
 import com.example.pokerun_2.UserHighScore;
+import com.example.pokerun_2.callbacks.MapCallBack;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
 
     private ArrayList<UserHighScore> userHighScores;
     private Context context;
+    private MapCallBack mapCallBack;
 
 
     public ScoreAdapter(Context context, ArrayList<UserHighScore> userHighScores) {
@@ -40,10 +42,9 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
     @Override
     public void onBindViewHolder(ScoreViewHolder viewHolder, int position) {
         UserHighScore userHighScore = getItem(position);
-        viewHolder.user_LBL_placement   .setText(userHighScore.getPlace());
-        viewHolder.player_LBL_score     .setText(userHighScore.getScore());
-        viewHolder.user_LBL_name        .setText(userHighScore.getName());
-
+//        viewHolder.user_LBL_placement     .setText(userHighScore.getPlace());
+//        viewHolder.user_LBL_score         .setText(userHighScore.getScore());
+//        viewHolder.user_LBL_name          .setText(userHighScore.getName());
     }
 
     private UserHighScore getItem(int position) {
@@ -57,7 +58,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
 
     public class ScoreViewHolder extends RecyclerView.ViewHolder {
         private MaterialTextView user_LBL_placement;
-        private MaterialTextView player_LBL_score;
+        private MaterialTextView user_LBL_score;
         private MaterialTextView user_LBL_name;
 
         public ScoreViewHolder(View itemView) {
@@ -65,9 +66,17 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
             // Define click listener for the ViewHolder's View
 
             user_LBL_placement  = itemView.findViewById(R.id.user_LBL_placement);
-            player_LBL_score    = itemView.findViewById(R.id.player_LBL_score);
+            user_LBL_score    = itemView.findViewById(R.id.user_LBL_score);
             user_LBL_name       = itemView.findViewById(R.id.user_LBL_name);
         }
+    }
+
+    public MapCallBack getMapCallBack() {
+        return mapCallBack;
+    }
+
+    public void setMapCallBack(MapCallBack mapCallBack) {
+        this.mapCallBack = mapCallBack;
     }
 
 }

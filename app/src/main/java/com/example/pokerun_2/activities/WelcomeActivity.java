@@ -1,9 +1,11 @@
 package com.example.pokerun_2.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -44,20 +46,8 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void clickedStart() {
-        String username = "";
-        if (welcome_ETXT_name.getText() == null) {
-            annoyedCounter--;
-            if (toaster != null)
-                toaster.cancel();
-            String message = "Enter your name!";
-            toaster = Toast
-                    .makeText(this, message, Toast.LENGTH_SHORT);
-            toaster.show();
-        } else if (annoyedCounter == 0) {
-            username = annoyedUsername;
-        } else {
-            if (!username.equals(annoyedUsername))
-                username = welcome_ETXT_name.getText().toString();
+        String username =checkName();
+        if(username != null) {
             Intent startIntent = new Intent(WelcomeActivity.this,
                     BigGameActivity.class);
             startIntent.putExtra(BigGameActivity.BUTTON_STATUS, welcome_SWT_buttons.isChecked());
@@ -66,6 +56,30 @@ public class WelcomeActivity extends AppCompatActivity {
             startActivity(startIntent);
             finish();
         }
+    }
+
+    private String checkName() {
+        String username = "";
+        if (annoyedCounter == 0) {
+            String message = "Okay, your name is " + annoyedUsername;
+            toaster = Toast
+                    .makeText(this, message, Toast.LENGTH_SHORT);
+            toaster.show();
+            return annoyedUsername;
+        }
+        if (TextUtils.isEmpty(welcome_ETXT_name.getText())) {
+            annoyedCounter--;
+            if (toaster != null)
+                toaster.cancel();
+            String message = "Enter your name!";
+            toaster = Toast
+                    .makeText(this, message, Toast.LENGTH_SHORT);
+            toaster.show();
+            return null;
+        }
+        if (!username.equals(annoyedUsername) )
+            username = welcome_ETXT_name.getText().toString();
+        return username;
     }
 
     private void clickedHighScore() {

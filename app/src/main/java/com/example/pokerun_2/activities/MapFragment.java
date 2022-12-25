@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.pokerun_2.R;
+import com.example.pokerun_2.UserHighScore;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,7 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-
+    private GoogleMap googleMap;
 
     @Nullable
     @Override
@@ -39,9 +41,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LatLng defaultLocation = new LatLng(0, 0);
-        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+        this.googleMap = googleMap;
+        this.googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         // Add a marker on the map coordinates.
-        googleMap.addMarker(new MarkerOptions()
+        this.googleMap.addMarker(new MarkerOptions()
                 .position(defaultLocation)
                 .title("Default"));
 
@@ -52,4 +55,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    public void goToLocation(UserHighScore userHighScore) {
+        float[] coordinates = userHighScore.getCoordinates();
+        LatLng userLocation = new LatLng(coordinates[0], coordinates[1]);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+
+    }
 }

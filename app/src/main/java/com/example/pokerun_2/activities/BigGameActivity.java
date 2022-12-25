@@ -15,16 +15,21 @@ import android.widget.Toast;
 
 import com.example.pokerun_2.Manager.BackgroundSound;
 import com.example.pokerun_2.Manager.GameManager;
+import com.example.pokerun_2.Manager.gameSP;
 import com.example.pokerun_2.R;
 import com.example.pokerun_2.StepCallback;
 import com.example.pokerun_2.Manager.TiltDetector;
+import com.example.pokerun_2.UserHighScore;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import im.delight.android.location.SimpleLocation;
 
 public class BigGameActivity extends AppCompatActivity {
 
@@ -54,16 +59,53 @@ public class BigGameActivity extends AppCompatActivity {
     private Vibrator v;
 
     private long startTime = System.currentTimeMillis();
+    private long currentTime = System.currentTimeMillis();
 
     private final int SLOW_SPEED = 750;
-    private final int FAST_SPEED = 500;
-    private final int VERY_FAST_SPEED = 350;
+    private final int FAST_SPEED = 550;
+    private final int VERY_FAST_SPEED = 400;
     private final String SLOW_SPEED_STR = "SLOW_SPEED_STR";
     private final String FAST_SPEED_STR = "FAST_SPEED_STR";
     private final String VERY_FAST_SPEED_STR = "VERY_FAST_SPEED_STR";
     private int delay = SLOW_SPEED;
     private String delayStatus = "";
     private String userName;
+    private int score = 0;
+
+    private boolean gameOver = false;
+    private SimpleLocation simpleLocation;
+
+    private void setDelay(String speed) {
+        if (!buttonStatus) {
+            if(!delayStatus.equals(speed))
+                switch (speed) {
+                    case SLOW_SPEED_STR:
+                        delay = SLOW_SPEED;
+                        delayStatus = SLOW_SPEED_STR;
+                        timer.cancel();
+                        startGame();
+                        break;
+                    case FAST_SPEED_STR:
+                        delay = FAST_SPEED;
+                        delayStatus = FAST_SPEED_STR;
+                        timer.cancel();
+                        startGame();
+                        break;
+                    case VERY_FAST_SPEED_STR:
+                        delay = VERY_FAST_SPEED;
+                        delayStatus = VERY_FAST_SPEED_STR;
+                        timer.cancel();
+                        startGame();
+                        break;
+                }
+        } else {
+            if (speedStatus) {
+                delay = FAST_SPEED;
+            } else {
+                delay = SLOW_SPEED;
+            }
+        }
+    }
 
 
     @Override
@@ -79,9 +121,11 @@ public class BigGameActivity extends AppCompatActivity {
         speedStatus = previousIntent.getBooleanExtra(SPEED_STATUS, false);
         userName = previousIntent.getStringExtra(USER_NAME);
 
+        simpleLocation =  gameManager.initLocation(this);
         initViews();
+        refreshUI();                                //initial setup (hides unrelevent views)
+        startGame();
         setDelay(SLOW_SPEED_STR);
-        refreshUI();
     }
 
 
@@ -132,7 +176,7 @@ public class BigGameActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        if (buttonStatus) {
+        if (!buttonStatus) {
             if (tiltDetector == null)
                 initTiltDetector();
         } else {
@@ -144,28 +188,23 @@ public class BigGameActivity extends AppCompatActivity {
         changeButtonVisibility();
     }
 
-    private void setDelay(String speed) {
-        if (buttonStatus) {
-            if (speed.equals(SLOW_SPEED_STR)) {
-                delay = SLOW_SPEED;
-            }
-            if (speed.equals(FAST_SPEED_STR)) {
-                delay = FAST_SPEED;
-            }
-            if (speed.equals(VERY_FAST_SPEED_STR)) {
-                delay = VERY_FAST_SPEED;
-            }
-        } else {
-            if (speedStatus) {
-                delay = FAST_SPEED;
-            } else {
-                delay = SLOW_SPEED;
-            }
-        }
+    private void startGame() {
+        currentTime = System.currentTimeMillis();
+        timer = new Timer();
+        timer.scheduleAtFixedRate(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(!gameOver) {
+                            runOnUiThread(() -> BigGameActivity.this.refreshUI());
+                        }
+                    }
+                }
+                , delay, delay);
     }
 
     private void changeButtonVisibility() {
-        if (buttonStatus) {
+        if (!buttonStatus) {
             game_FAB_left.setVisibility(View.INVISIBLE);
             game_FAB_right.setVisibility(View.INVISIBLE);
         } else {
@@ -233,18 +272,6 @@ public class BigGameActivity extends AppCompatActivity {
 
 
     //////UPDATE VISUALS//////
-    private void startGame() {
-        startTime = System.currentTimeMillis();
-        timer = new Timer();
-        timer.scheduleAtFixedRate(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        runOnUiThread(() -> BigGameActivity.this.refreshUI());
-                    }
-                }
-                , delay, delay);
-    }
 
     private void refreshUI() {
         gameManager.setNextState();
@@ -258,10 +285,28 @@ public class BigGameActivity extends AppCompatActivity {
         }
         gameManager.setHit(false);
         if (gameManager.isLose(v)) {
-            openScoreScreen("Game Over", gameManager.getScore());
+            gameOver = true;
+            checkHighScore();
+            openScoreScreen(userName, gameManager.getScore());
         } else if (gameManager.getHits() != 0)
             game_IMG_lives.get(game_IMG_lives.size() - gameManager.getHits()).setVisibility(View.INVISIBLE);
 
+    }
+
+    private void checkHighScore() {
+        float[] coordinates = {(float) simpleLocation.getLatitude(), (float) simpleLocation.getLongitude()};
+        UserHighScore currentUser = new UserHighScore(userName, score, coordinates);
+        ArrayList<UserHighScore> userHighScores = gameSP.getInstance().getHighScores();
+        if (userHighScores != null) {
+            for (UserHighScore user : userHighScores) {
+                if (currentUser.getScore() > user.getScore())
+                    userHighScores.set(user.getPlace(), currentUser);
+            }
+        } else {
+            userHighScores = new ArrayList<>();
+            userHighScores.add(currentUser);
+        }
+        gameSP.getInstance().setHighScores(userHighScores);
     }
 
     private void updatePlayerPos() {                // update player position
@@ -306,9 +351,12 @@ public class BigGameActivity extends AppCompatActivity {
     }
 
     private void updateScore() {
-        int score = gameManager.getScore();
-        score += (System.currentTimeMillis() - startTime) / delay;      // score over time
-        game_LBL_score.setText(score);
+        long timeScore = (System.currentTimeMillis() - currentTime);
+        currentTime = System.currentTimeMillis();
+        timeScore /= delay;                                   // score over time
+        gameManager.addPointsToScore((int)timeScore);
+        score = gameManager.getScore();
+        game_LBL_score.setText("" + score);
     }
 
     private void toast(int hitCode) {
@@ -326,10 +374,12 @@ public class BigGameActivity extends AppCompatActivity {
 
 
     //////CHANGE SCREENS//////
-    private void openScoreScreen(String status, int score) {
+    private void openScoreScreen(String userName, int score) {
         Intent scoreIntent = new Intent(this, ScoreActivity.class);
         scoreIntent.putExtra(ScoreActivity.KEY_SCORE, score);
-        scoreIntent.putExtra(ScoreActivity.KEY_STATUS, status);
+        scoreIntent.putExtra(ScoreActivity.KEY_USERNAME, userName);
+        scoreIntent.putExtra(ScoreActivity.KEY_LATITUDE, 0);
+        scoreIntent.putExtra(ScoreActivity.KEY_LONGITUDE, 0);
         startActivity(scoreIntent);
         finish();
     }
@@ -338,6 +388,7 @@ public class BigGameActivity extends AppCompatActivity {
     //////ON PHONE ACTION//////
     @Override
     protected void onStop() {
+        gameOver = true;
         timer.cancel();
         v.cancel();
         toaster.cancel();
@@ -349,6 +400,7 @@ public class BigGameActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        gameOver = true;
         timer.cancel();
         v.cancel();
         toaster.cancel();
@@ -360,6 +412,7 @@ public class BigGameActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        gameOver = false;
         mBackgroundSound = new BackgroundSound(this);
         mBackgroundSound.execute();
         if (tiltDetector != null)

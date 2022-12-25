@@ -1,11 +1,14 @@
 package com.example.pokerun_2.Manager;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 
 import java.util.Arrays;
 import java.util.Random;
+
+import im.delight.android.location.SimpleLocation;
 
 public class GameManager {
 
@@ -112,7 +115,7 @@ public class GameManager {
     }
 
     public boolean isLose(Vibrator v) {
-        return lives == 0;
+        return lives == hits;
     }
 
     public boolean checkHit(Vibrator v) {
@@ -160,5 +163,17 @@ public class GameManager {
 
     public void addPointsToScore(int points) {
         score += points;
+    }
+
+    public void setScore(int score) {
+
+    }
+
+    public SimpleLocation initLocation(Context context) {
+        SimpleLocation location = new SimpleLocation(context);
+        if (!location.hasLocationEnabled()) {
+            SimpleLocation.openSettings(context);
+        }
+        return location;
     }
 }

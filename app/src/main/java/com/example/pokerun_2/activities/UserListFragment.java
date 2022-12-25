@@ -29,7 +29,7 @@ public class UserListFragment extends Fragment {
     public UserListFragment(Context context) {
         this.conext = context;
         ArrayList<UserHighScore> userHighScores = gameSP.getInstance().getHighScores();
-        userHighScores.sort();
+        scoreAdapter = new ScoreAdapter(context,userHighScores);
     }
 
     @Nullable
@@ -44,13 +44,21 @@ public class UserListFragment extends Fragment {
     }
 
     private void initViews() {
-        userRecycledView.setAdapter(scoreAdapter);
         userRecycledView.setLayoutManager(new LinearLayoutManager(conext));
-
+        userRecycledView.setAdapter(scoreAdapter);
     }
-
 
     private void findViews(View view) {
         userRecycledView = view.findViewById(R.id.score_RV_userScores);
     }
+
+    public ScoreAdapter getScoreAdapter() {
+        return scoreAdapter;
+    }
+
+    public UserListFragment setScoreAdapter(ScoreAdapter scoreAdapter) {
+        this.scoreAdapter = scoreAdapter;
+        return this;
+    }
+
 }
