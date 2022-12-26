@@ -1,15 +1,13 @@
 package com.example.pokerun_2.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Toast;
 
-import com.example.pokerun_2.Manager.BackgroundSound;
+import com.example.pokerun_2.utils.BackgroundSound;
 import com.example.pokerun_2.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;

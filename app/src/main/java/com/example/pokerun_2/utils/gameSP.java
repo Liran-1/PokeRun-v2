@@ -1,4 +1,4 @@
-package com.example.pokerun_2.Manager;
+package com.example.pokerun_2.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -34,12 +34,11 @@ public class gameSP {
     }
 
     public ArrayList<UserHighScore> getHighScores() {
-
         TypeToken<List<UserHighScore>> listType = new TypeToken<List<UserHighScore>>() {};
         Gson gson = new Gson();
-        String gameData = preferences.getString(DB_FILE, "");
+        String gameData = preferences.getString(USER_RECORDS, "");
         ArrayList<UserHighScore> userHighScores  = gson.fromJson(gameData, listType.getType());
-        return userHighScores;
+        return userHighScores != null ? userHighScores : new ArrayList<>();
     }
 
     public void setHighScores(ArrayList<UserHighScore> userHighScores) {
@@ -50,7 +49,7 @@ public class gameSP {
                 highScores.add(userHighScores.get(i));
         String json = gson.toJson(highScores);
         editor = preferences.edit();
-        editor.putString(DB_FILE, json);
+        editor.putString(USER_RECORDS, json);
         editor.commit();
 
     }

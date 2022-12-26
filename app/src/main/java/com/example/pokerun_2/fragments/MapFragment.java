@@ -1,4 +1,4 @@
-package com.example.pokerun_2.activities;
+package com.example.pokerun_2.fragments;
 
 
 import android.os.Bundle;

@@ -20,6 +20,7 @@ public class GameManager {
     public static final int SCORE_CODE_POINTS = 10;
 
     private int score   = 0;
+    private int distance = 0;
     private int lives;
     private int hits    = 0;
 
@@ -161,12 +162,16 @@ public class GameManager {
         return score;
     }
 
+    public int getDistance() {
+        return distance;
+    }
+
     public void addPointsToScore(int points) {
         score += points;
     }
 
-    public void setScore(int score) {
-
+    public void advanceDistance(int dist){
+        distance += dist;
     }
 
     public SimpleLocation initLocation(Context context) {

@@ -4,9 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:cardCornerRadius="16dp"
-    android:background="@color/yellow"
-
-    >
+    android:background="@color/yellow">
 
     <RelativeLayout
         android:id="@+id/score_RLO_place"
@@ -15,9 +13,7 @@
         android:background="@color/yellow"
         android:paddingVertical="16dp"
         android:elevation="12dp"
-        app:cardElevation="12dp"
-
-        >
+        app:cardElevation="12dp">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/user_LBL_placement"

@@ -6,7 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import com.example.pokerun_2.StepCallback;
+import com.example.pokerun_2.callbacks.StepCallback;
 
 public class TiltDetector {
     private StepCallback stepCallback;
@@ -52,15 +52,15 @@ public class TiltDetector {
                 if (stepCallback != null)
                     stepCallback.tiltLeft();
             }
-            if(y > 0.0 && y < 3.0){
+            if(y >= 0.0 && y < 2.0){
                 if (stepCallback != null)
                     stepCallback.speedSlow();
             }
-            if(y > 3.0 && y < 6.0){
+            if(y >= 4.0 && y < 7.0){
                 if (stepCallback != null)
                     stepCallback.speedFast();
             }
-            if(y > 6.0){
+            if(y >= 8.0){
                 if (stepCallback != null)
                     stepCallback.speedVeryFast();
             }

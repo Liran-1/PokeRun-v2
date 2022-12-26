@@ -1,4 +1,4 @@
-package com.example.pokerun_2.activities;
+package com.example.pokerun_2.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,8 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pokerun_2.Adapter.ScoreAdapter;
-import com.example.pokerun_2.CallBack_userProtocol;
-import com.example.pokerun_2.Manager.gameSP;
+import com.example.pokerun_2.utils.gameSP;
 import com.example.pokerun_2.R;
 import com.example.pokerun_2.UserHighScore;
 
