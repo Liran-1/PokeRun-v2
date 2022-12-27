@@ -10,9 +10,9 @@ public class UserHighScore implements Comparable<UserHighScore>{
     private float coordinates[];
 
     public UserHighScore(String name, int score,  float[] coordinates) {
+        this.coordinates = coordinates;
         this.name = name;
         this.score = score;
-        this.coordinates = coordinates;
     }
 
     public String getName() {

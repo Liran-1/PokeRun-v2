@@ -2,6 +2,7 @@ package com.example.pokerun_2.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.pokerun_2.UserHighScore;
 
@@ -38,19 +39,21 @@ public class gameSP {
         Gson gson = new Gson();
         String gameData = preferences.getString(USER_RECORDS, "");
         ArrayList<UserHighScore> userHighScores  = gson.fromJson(gameData, listType.getType());
+        Log.d("LOADED FILE", gameData);
         return userHighScores != null ? userHighScores : new ArrayList<>();
     }
 
     public void setHighScores(ArrayList<UserHighScore> userHighScores) {
         ArrayList<UserHighScore> highScores = userHighScores;
         Gson gson = new Gson();
-        if (userHighScores.size() > 10)
-            for (int i = 0; i < 10; i++)
-                highScores.add(userHighScores.get(i));
+//        if (userHighScores.size() > 10)
+//            for (int i = 0; i < 10; i++)
+//                highScores.add(userHighScores.get(i));
         String json = gson.toJson(highScores);
         editor = preferences.edit();
         editor.putString(USER_RECORDS, json);
         editor.commit();
+        Log.d("SAVEDFILE", json);
 
     }
 
@@ -73,5 +76,6 @@ public class gameSP {
     public String getString(String key, String defValue) {
         return preferences.getString(key, defValue);
     }
+
 
 }

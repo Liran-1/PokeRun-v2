@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pokerun_2.Adapter.ScoreAdapter;
+import com.example.pokerun_2.callbacks.MapCallBack;
 import com.example.pokerun_2.utils.gameSP;
 import com.example.pokerun_2.R;
 import com.example.pokerun_2.UserHighScore;
@@ -21,15 +22,8 @@ import java.util.ArrayList;
 
 public class UserListFragment extends Fragment {
 
-    private Context conext;
     private RecyclerView userRecycledView;
-    private ScoreAdapter scoreAdapter;
-
-    public UserListFragment(Context context) {
-        this.conext = context;
-        ArrayList<UserHighScore> userHighScores = gameSP.getInstance().getHighScores();
-        scoreAdapter = new ScoreAdapter(context,userHighScores);
-    }
+    private MapCallBack mapCallBack;
 
     @Nullable
     @Override
@@ -43,21 +37,18 @@ public class UserListFragment extends Fragment {
     }
 
     private void initViews() {
-        userRecycledView.setLayoutManager(new LinearLayoutManager(conext));
+        ArrayList list = gameSP.getInstance().getHighScores();
+        ScoreAdapter scoreAdapter = new ScoreAdapter(getContext(),list );
+        userRecycledView.setLayoutManager(new LinearLayoutManager(getContext()));
         userRecycledView.setAdapter(scoreAdapter);
+        scoreAdapter.setMapCallBack(mapCallBack);
     }
 
     private void findViews(View view) {
         userRecycledView = view.findViewById(R.id.score_RV_userScores);
     }
 
-    public ScoreAdapter getScoreAdapter() {
-        return scoreAdapter;
+    public void setCallback(MapCallBack mapCallBack) {
+        this.mapCallBack = mapCallBack;
     }
-
-    public UserListFragment setScoreAdapter(ScoreAdapter scoreAdapter) {
-        this.scoreAdapter = scoreAdapter;
-        return this;
-    }
-
 }

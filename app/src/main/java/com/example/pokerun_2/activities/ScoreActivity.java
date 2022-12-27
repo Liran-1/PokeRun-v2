@@ -23,42 +23,24 @@ public class ScoreActivity extends AppCompatActivity {
 
     private MapFragment mapFragment;
     private UserListFragment userListFragment;
-    private RecyclerView score_RV_userScores;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score);
 
-        userListFragment = new UserListFragment(this);
-        mapFragment = new MapFragment();
-
-//        userListFragment.getScoreAdapter().setMapCallBack(new MapCallBack() {
-//            @Override
-//            public void findLocation(UserHighScore userHighScore, int pos) {
-//                mapFragment.goToLocation(userHighScore);
-//            }
-//        });
-        findViews();
-        initViews();
-    }
-
-    private void findViews() {
-        score_RV_userScores = findViewById(R.id.score_RV_userScores);
-    }
-
-    private void initViews() {
-        getSupportFragmentManager().beginTransaction().add(R.id.main_FRAME_map, mapFragment).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.main_FRAME_list, userListFragment).commit();
-
-        ScoreAdapter scoreAdapter = new ScoreAdapter(this, gameSP.getInstance().getHighScores());
-        score_RV_userScores.setLayoutManager(new LinearLayoutManager(this));
-        score_RV_userScores.setAdapter(scoreAdapter);
-        scoreAdapter.setMapCallBack(new MapCallBack() {
+        userListFragment = new UserListFragment();
+        userListFragment.setCallback(new MapCallBack() {
             @Override
-            public void findLocation(UserHighScore userHighScore, int pos) {
+            public void userHighScoreClicked(UserHighScore userHighScore, int pos) {
                 mapFragment.goToLocation(userHighScore);
             }
         });
+        mapFragment = new MapFragment();
+
+        getSupportFragmentManager().beginTransaction().add(R.id.main_FRAME_map, mapFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.main_FRAME_list, userListFragment).commit();
+
     }
+
 }

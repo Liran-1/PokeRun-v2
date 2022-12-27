@@ -42,9 +42,11 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
     @Override
     public void onBindViewHolder(ScoreViewHolder viewHolder, int position) {
         UserHighScore userHighScore = getItem(position);
-//        viewHolder.user_LBL_placement     .setText(userHighScore.getPlace());
-//        viewHolder.user_LBL_score         .setText(userHighScore.getScore());
-//        viewHolder.user_LBL_name          .setText(userHighScore.getName());
+        if (userHighScore != null) {
+            viewHolder.user_LBL_placement.setText(position + "");
+            viewHolder.user_LBL_score.setText(userHighScore.getScore() + "");
+            viewHolder.user_LBL_name.setText(userHighScore.getName());
+        }
     }
 
     private UserHighScore getItem(int position) {
@@ -68,12 +70,11 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
             user_LBL_placement  = itemView.findViewById(R.id.user_LBL_placement);
             user_LBL_score    = itemView.findViewById(R.id.user_LBL_score);
             user_LBL_name       = itemView.findViewById(R.id.user_LBL_name);
+            itemView.setOnClickListener(v -> mapCallBack.userHighScoreClicked(getItem(getAdapterPosition()),getAdapterPosition()));
         }
     }
 
-    public MapCallBack getMapCallBack() {
-        return mapCallBack;
-    }
+
 
     public void setMapCallBack(MapCallBack mapCallBack) {
         this.mapCallBack = mapCallBack;

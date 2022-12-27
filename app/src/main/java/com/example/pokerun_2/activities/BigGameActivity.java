@@ -9,10 +9,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.pokerun_2.Manager.UserComparator;
 import com.example.pokerun_2.utils.BackgroundSound;
 import com.example.pokerun_2.Manager.GameManager;
 import com.example.pokerun_2.utils.gameSP;
@@ -25,6 +27,8 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -326,15 +330,21 @@ public class BigGameActivity extends AppCompatActivity {
         float[] coordinates = {(float) simpleLocation.getLatitude(), (float) simpleLocation.getLongitude()};
         UserHighScore currentUser = new UserHighScore(userName, score, coordinates);
         ArrayList<UserHighScore> userHighScores = gameSP.getInstance().getHighScores();
-        if(userHighScores.size() < HIGH_SCORE_LIST_SIZE) {
-            for (UserHighScore user : userHighScores) {
-                if (currentUser.getScore() > user.getScore())
-                    userHighScores.set(user.getPlace(), currentUser);
-            }
-        } else {
+//        if(userHighScores.size() >= HIGH_SCORE_LIST_SIZE) {
+//            for (UserHighScore user : userHighScores) {
+//                if (currentUser.getScore() > user.getScore()) {
+//                    int userPos = user.getPlace();
+//                    userHighScores.set(userPos, currentUser);
+//                    currentUser.setPlace(userPos);
+//                }
+//                break;
+//            }
+//        } else {
+            UserComparator userComparator = new UserComparator();
             userHighScores.add(currentUser);
-        }
-
+            userHighScores.sort(userComparator);
+            currentUser.setPlace(userHighScores.indexOf(currentUser) + 1);
+//        }
         gameSP.getInstance().setHighScores(userHighScores);
     }
 
@@ -418,10 +428,10 @@ public class BigGameActivity extends AppCompatActivity {
     //////CHANGE SCREENS//////
     private void openScoreScreen(String userName, int score) {
         Intent scoreIntent = new Intent(this, ScoreActivity.class);
-        scoreIntent.putExtra(ScoreActivity.KEY_SCORE, score);
-        scoreIntent.putExtra(ScoreActivity.KEY_USERNAME, userName);
-        scoreIntent.putExtra(ScoreActivity.KEY_LATITUDE, 0);
-        scoreIntent.putExtra(ScoreActivity.KEY_LONGITUDE, 0);
+//        scoreIntent.putExtra(ScoreActivity.KEY_SCORE, score);
+//        scoreIntent.putExtra(ScoreActivity.KEY_USERNAME, userName);
+//        scoreIntent.putExtra(ScoreActivity.KEY_LATITUDE, 0);
+//        scoreIntent.putExtra(ScoreActivity.KEY_LONGITUDE, 0);
         startActivity(scoreIntent);
         finish();
     }
