@@ -16,7 +16,8 @@ public class BackgroundSound extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        player = MediaPlayer.create(this.context, R.raw.lifelike);
+        player = MediaPlayer.create(this.context,
+                R.raw.pokemon_red_yellow_blue_battle_music_trainer);
         player.setLooping(true); // Set looping
         player.setVolume(1.0f, 1.0f);
         player.start();
@@ -26,6 +27,10 @@ public class BackgroundSound extends AsyncTask<Void, Void, Void> {
 
     public void stopSound(){
         player.stop();
+    }
+
+    public void startSound(){
+        player.start();
     }
 
 }

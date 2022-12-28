@@ -29,7 +29,6 @@ public class UserListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.user_item_recyclerview, container, false);
-
         findViews(view);
         initViews();
 
@@ -39,6 +38,7 @@ public class UserListFragment extends Fragment {
     private void initViews() {
         ArrayList list = gameSP.getInstance().getHighScores();
         ScoreAdapter scoreAdapter = new ScoreAdapter(getContext(),list );
+        userRecycledView.setHasFixedSize(true);
         userRecycledView.setLayoutManager(new LinearLayoutManager(getContext()));
         userRecycledView.setAdapter(scoreAdapter);
         scoreAdapter.setMapCallBack(mapCallBack);

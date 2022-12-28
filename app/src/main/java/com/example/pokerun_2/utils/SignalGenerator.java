@@ -11,7 +11,7 @@ public class SignalGenerator {
 
     private Context context;
     private static Vibrator v;
-    private static BackgroundSound mBackgroundSound;
+    private static BackgroundSound hitSound;
 
     private SignalGenerator(Context context) {
         this.context = context;
@@ -25,6 +25,7 @@ public class SignalGenerator {
     }
 
     public static SignalGenerator getInstance() {
+
         return signalGenerator;
     }
 

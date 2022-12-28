@@ -43,9 +43,9 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
     public void onBindViewHolder(ScoreViewHolder viewHolder, int position) {
         UserHighScore userHighScore = getItem(position);
         if (userHighScore != null) {
-            viewHolder.user_LBL_placement.setText(position + "");
-            viewHolder.user_LBL_score.setText(userHighScore.getScore() + "");
-            viewHolder.user_LBL_name.setText(userHighScore.getName());
+//            viewHolder.user_LBL_placement   .setText(userHighScore.getPlace() + "");
+            viewHolder.user_LBL_score       .setText(userHighScore.getScore() + "");
+            viewHolder.user_LBL_name        .setText(userHighScore.getName());
         }
     }
 
@@ -65,20 +65,16 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
 
         public ScoreViewHolder(View itemView) {
             super(itemView);
-            // Define click listener for the ViewHolder's View
-
-            user_LBL_placement  = itemView.findViewById(R.id.user_LBL_placement);
-            user_LBL_score    = itemView.findViewById(R.id.user_LBL_score);
+//            user_LBL_placement  = itemView.findViewById(R.id.user_LBL_placement);
+            user_LBL_score      = itemView.findViewById(R.id.user_LBL_score);
             user_LBL_name       = itemView.findViewById(R.id.user_LBL_name);
-            itemView.setOnClickListener(v -> mapCallBack.userHighScoreClicked(getItem(getAdapterPosition()),getAdapterPosition()));
+            itemView.setOnClickListener(v -> mapCallBack.
+                    userHighScoreClicked(getItem(getAdapterPosition()),getAdapterPosition()));
         }
     }
-
-
 
     public void setMapCallBack(MapCallBack mapCallBack) {
         this.mapCallBack = mapCallBack;
     }
 
 }
-

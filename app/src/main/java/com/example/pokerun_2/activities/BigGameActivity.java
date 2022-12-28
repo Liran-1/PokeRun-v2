@@ -1,15 +1,18 @@
 package com.example.pokerun_2.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.util.Log;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 import com.example.pokerun_2.Manager.UserComparator;
 import com.example.pokerun_2.utils.BackgroundSound;
 import com.example.pokerun_2.Manager.GameManager;
+import com.example.pokerun_2.utils.SignalGenerator;
 import com.example.pokerun_2.utils.gameSP;
 import com.example.pokerun_2.R;
 import com.example.pokerun_2.callbacks.StepCallback;
@@ -27,8 +31,6 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,6 +41,7 @@ public class BigGameActivity extends AppCompatActivity {
     public static final String BUTTON_STATUS = "BUTTON_STATUS";
     public static final String SPEED_STATUS = "SPEED_STATUS";
     public static final String USER_NAME = "USER_NAME";
+    private static final int PERMISSION_ID = 44;
 
     private boolean buttonStatus, speedStatus;
 
@@ -56,9 +59,11 @@ public class BigGameActivity extends AppCompatActivity {
 
     private GameManager gameManager;
 
+    private SignalGenerator signalGenerator = SignalGenerator.getInstance();
     private TiltDetector tiltDetector;
     private Timer timer = null;
     private BackgroundSound mBackgroundSound;
+    private BackgroundSound collisionSound;
     private Toast toaster;
     private Vibrator v;
 
@@ -76,8 +81,6 @@ public class BigGameActivity extends AppCompatActivity {
     private String userName;
     private int score = 0;
     private int distance = 0;
-    private final int HIGH_SCORE_LIST_SIZE = 10;
-
 
     private boolean gameOver = false;
     private SimpleLocation simpleLocation;
@@ -103,17 +106,6 @@ public class BigGameActivity extends AppCompatActivity {
         setDelay(SLOW_SPEED_STR);
     }
 
-    private void setSignals() {
-        if (!gameOver) {
-            mBackgroundSound = new BackgroundSound(this);
-            mBackgroundSound.execute();
-            v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        } else {
-            mBackgroundSound.stopSound();
-            v.cancel();
-            toaster.cancel();
-        }
-    }
 
 
     //////SET GAME//////
@@ -174,6 +166,18 @@ public class BigGameActivity extends AppCompatActivity {
             game_FAB_left.setOnClickListener(view -> actionLeft());
         }
         changeButtonVisibility();
+    }
+
+    private void setSignals() {
+        if (!gameOver) {
+            mBackgroundSound = new BackgroundSound(this);
+            mBackgroundSound.execute();
+            v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        } else {
+            mBackgroundSound.stopSound();
+            v.cancel();
+            toaster.cancel();
+        }
     }
 
     private void startGame() {
@@ -311,23 +315,27 @@ public class BigGameActivity extends AppCompatActivity {
         updateScore();
         updateDistance();
         if (gameManager.checkHit(v)) {
-            toastCollision(GameManager.OBSTACLE_CODE);
+            updateCollision(GameManager.OBSTACLE_CODE);
+
+        } else if (gameManager.getGain()){
+            updateCollision(gameManager.SCORE_CODE);
         }
         gameManager.setHit(false);
+        gameManager.setGain(false);
         if (gameManager.isLose(v)) {
             gameOver = true;
             if(timer != null)
                 stopGame();
             setSignals();
             checkHighScore();
-            openScoreScreen(userName, gameManager.getScore());
+            openScoreScreen();
         } else if (gameManager.getHits() != 0)
             game_IMG_lives.get(game_IMG_lives.size() - gameManager.getHits()).setVisibility(View.INVISIBLE);
 
     }
 
     private void checkHighScore() {
-        float[] coordinates = {(float) simpleLocation.getLatitude(), (float) simpleLocation.getLongitude()};
+        double[] coordinates = {simpleLocation.getLatitude(), simpleLocation.getLongitude()};
         UserHighScore currentUser = new UserHighScore(userName, score, coordinates);
         ArrayList<UserHighScore> userHighScores = gameSP.getInstance().getHighScores();
 //        if(userHighScores.size() >= HIGH_SCORE_LIST_SIZE) {
@@ -340,10 +348,9 @@ public class BigGameActivity extends AppCompatActivity {
 //                break;
 //            }
 //        } else {
-            UserComparator userComparator = new UserComparator();
-            userHighScores.add(currentUser);
-            userHighScores.sort(userComparator);
-            currentUser.setPlace(userHighScores.indexOf(currentUser) + 1);
+        UserComparator userComparator = new UserComparator();
+        userHighScores.add(currentUser);
+        userHighScores.sort(userComparator);
 //        }
         gameSP.getInstance().setHighScores(userHighScores);
     }
@@ -366,7 +373,6 @@ public class BigGameActivity extends AppCompatActivity {
         for (int i = 0; i < rows - 1; i++) {
             for (int j = 0; j < cols; j++) {
                 if (currentState[i][j] == GameManager.OBSTACLE_CODE) {
-//                    game_IMG_obstacles[i * cols + j];
                     game_IMG_objects.get(i * cols + j).setVisibility(View.VISIBLE);
                     game_IMG_objects.get(i * cols + j).setImageResource(R.drawable.pokeball);
                 } else if (currentState[i][j] == GameManager.EMPTY_CODE) {
@@ -401,6 +407,27 @@ public class BigGameActivity extends AppCompatActivity {
         gameManager.advanceDistance(1);
     }
 
+    private void updateCollision(int hitCode) {
+        toastCollision(hitCode);
+        soundCollision(hitCode);
+    }
+
+    private void soundCollision(int hitCode) {
+        MediaPlayer player = null;
+        if (hitCode == GameManager.OBSTACLE_CODE)
+            player = MediaPlayer.create(this,
+                R.raw.pokeball_throwing_sound_effect);
+        else if (hitCode == GameManager.SCORE_CODE)
+            player = MediaPlayer.create(this,
+                    R.raw.pokemon_score_sound_effect);
+        if(player != null) {
+            player.setLooping(false); // Set looping
+            player.setVolume(1.0f, 1.0f);
+            player.start();
+        }
+
+    }
+
     private void toastCollision(int hitCode) {
         if (toaster != null)
             toaster.cancel();
@@ -426,7 +453,7 @@ public class BigGameActivity extends AppCompatActivity {
 
 
     //////CHANGE SCREENS//////
-    private void openScoreScreen(String userName, int score) {
+    private void openScoreScreen() {
         Intent scoreIntent = new Intent(this, ScoreActivity.class);
 //        scoreIntent.putExtra(ScoreActivity.KEY_SCORE, score);
 //        scoreIntent.putExtra(ScoreActivity.KEY_USERNAME, userName);
@@ -455,6 +482,8 @@ public class BigGameActivity extends AppCompatActivity {
         if (timer != null)
             stopGame();
         setSignals();
+        if(simpleLocation != null)
+            simpleLocation.endUpdates();
         if (tiltDetector != null)
             tiltDetector.stop();
         super.onPause();
@@ -466,9 +495,41 @@ public class BigGameActivity extends AppCompatActivity {
         if (timer == null)
             startGame();
         setSignals();
+        if(simpleLocation != null && checkPermissions() && isLocationEnabled())
+            simpleLocation.beginUpdates();
+        else initLocation();
         if (tiltDetector != null)
             tiltDetector.start();
         super.onResume();
+    }
+
+    private void initLocation() {
+        if(!getGPSPermission()){
+            requestGPSPermission();
+        }
+        if(!isLocationEnabled()){
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+    }
+
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private void requestGPSPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ID);
+    }
+
+    private boolean getGPSPermission() {
+        return ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
 }

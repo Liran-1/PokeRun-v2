@@ -17,6 +17,8 @@ public class gameSP {
     private static final String DB_FILE = "DB_FILE";
     private static final String USER_RECORDS = "USER_RECORDS";
 
+    private final int HIGH_SCORE_LIST_SIZE = 10;
+
     private static gameSP instance = null;
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
@@ -38,22 +40,27 @@ public class gameSP {
         TypeToken<List<UserHighScore>> listType = new TypeToken<List<UserHighScore>>() {};
         Gson gson = new Gson();
         String gameData = preferences.getString(USER_RECORDS, "");
-        ArrayList<UserHighScore> userHighScores  = gson.fromJson(gameData, listType.getType());
+        ArrayList<UserHighScore> userHighScores = gson.fromJson(gameData, listType.getType());
         Log.d("LOADED FILE", gameData);
         return userHighScores != null ? userHighScores : new ArrayList<>();
     }
 
     public void setHighScores(ArrayList<UserHighScore> userHighScores) {
-        ArrayList<UserHighScore> highScores = userHighScores;
+        ArrayList<UserHighScore> highScores = new ArrayList<>();
         Gson gson = new Gson();
-//        if (userHighScores.size() > 10)
-//            for (int i = 0; i < 10; i++)
-//                highScores.add(userHighScores.get(i));
+        int counter = 0;
+        if (userHighScores.size() > HIGH_SCORE_LIST_SIZE)
+            for (UserHighScore user:userHighScores) {
+                if(counter < HIGH_SCORE_LIST_SIZE)
+                highScores.add(user);
+                else break;
+                counter++;
+            }
         String json = gson.toJson(highScores);
         editor = preferences.edit();
         editor.putString(USER_RECORDS, json);
         editor.commit();
-        Log.d("SAVEDFILE", json);
+        Log.d("SAVED_FILE", json);
 
     }
 

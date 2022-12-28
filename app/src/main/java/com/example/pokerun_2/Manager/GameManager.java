@@ -33,6 +33,7 @@ public class GameManager {
     private int obstacleCounter = lanes - 1;        // to make sure user isn't blocked
 
     private boolean hit = false;
+    private boolean gain = false;
 
     public GameManager(int lives) {
         this.lives = lives;
@@ -52,8 +53,8 @@ public class GameManager {
         if(currentState[rows - 1][currentPlayerIndex] == OBSTACLE_CODE){    //obj code overrides
             setHit(true);                                                   //player code
         }
-        if(currentState[rows - 1][currentPlayerIndex] == SCORE_CODE){    //obj code overrides
-            addPointsToScore(SCORE_CODE_POINTS);                                                   //player code
+        if(currentState[rows - 1][currentPlayerIndex] == SCORE_CODE){       //obj code overrides
+            setGain(true);                                                  // player code
         }
 
         currentState[rows - 1][currentPlayerIndex] = PLAYER_CODE;           //put player code back
@@ -158,6 +159,14 @@ public class GameManager {
         this.hit = hit;
     }
 
+    public void setGain(boolean gain) {
+        this.gain = gain;
+    }
+
+    public boolean getGain(){
+        return gain;
+    }
+
     public int getScore() {
         return score;
     }
@@ -181,4 +190,6 @@ public class GameManager {
         }
         return location;
     }
+
+
 }

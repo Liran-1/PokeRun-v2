@@ -1,9 +1,15 @@
 package com.example.pokerun_2.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -28,14 +34,45 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private int annoyedCounter = 5;         //joke
     private String annoyedUsername = "Loser";
+    private int PERMISSION_ID = 44;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        initLocation();
         findViews();
         initViews();
+    }
+
+    private void initLocation() {
+        if(!getGPSPermission()){
+            requestGPSPermission();
+        }
+        if(!isLocationEnabled()){
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+    }
+
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private void requestGPSPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ID);
+    }
+
+    private boolean getGPSPermission() {
+        return ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void initViews() {
@@ -58,14 +95,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private String checkName() {
         String username = "";
-        if (annoyedCounter == 0) {
-            String message = "Okay, your name is " + annoyedUsername;
-            toaster = Toast
-                    .makeText(this, message, Toast.LENGTH_SHORT);
-            toaster.show();
-            return annoyedUsername;
-        }
-        if (TextUtils.isEmpty(welcome_ETXT_name.getText())) {
+
+        if (TextUtils.isEmpty(welcome_ETXT_name.getText()) && annoyedCounter > 0) {
             annoyedCounter--;
             if (toaster != null)
                 toaster.cancel();
@@ -74,10 +105,17 @@ public class WelcomeActivity extends AppCompatActivity {
                     .makeText(this, message, Toast.LENGTH_SHORT);
             toaster.show();
             return null;
-        }
-        if (!username.equals(annoyedUsername) )
+        } else if (!username.equals(annoyedUsername) )
             username = welcome_ETXT_name.getText().toString();
+        else if (annoyedCounter == 0) {
+            String message = "Okay, your name is " + annoyedUsername;
+            toaster = Toast
+                    .makeText(this, message, Toast.LENGTH_SHORT);
+            toaster.show();
+            return annoyedUsername;
+        }
         return username;
+
     }
 
     private void clickedHighScore() {
@@ -93,15 +131,15 @@ public class WelcomeActivity extends AppCompatActivity {
         welcome_SWT_fast = findViewById(R.id.welcome_SWT_fast);
     }
 
-    private void openGameScreen(String status, int score) {
-        String gameMode = "big";
-        if (welcome_SWT_gameMode.isActivated()) {
-            gameMode = "small";
-        }
-        Intent scoreIntent = new Intent(this, ScoreActivity.class);
-        scoreIntent.putExtra(String.valueOf(BigGameActivity.SPEED_STATUS), false);
-        scoreIntent.putExtra(String.valueOf(BigGameActivity.BUTTON_STATUS), false);
-        startActivity(scoreIntent);
-        finish();
-    }
+//    private void openGameScreen(String status, int score) {
+//        String gameMode = "big";
+//        if (welcome_SWT_gameMode.isActivated()) {
+//            gameMode = "small";
+//        }
+//        Intent scoreIntent = new Intent(this, ScoreActivity.class);
+//        scoreIntent.putExtra(String.valueOf(BigGameActivity.SPEED_STATUS), false);
+//        scoreIntent.putExtra(String.valueOf(BigGameActivity.BUTTON_STATUS), false);
+//        startActivity(scoreIntent);
+//        finish();
+//    }
 }

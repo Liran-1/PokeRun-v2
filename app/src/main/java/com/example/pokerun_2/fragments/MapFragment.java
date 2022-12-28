@@ -56,9 +56,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 
     public void goToLocation(UserHighScore userHighScore) {
-        float[] coordinates = userHighScore.getCoordinates();
+        googleMap.clear();
+        String name = userHighScore.getName();
+        double[] coordinates = userHighScore.getCoordinates();
         LatLng userLocation = new LatLng(coordinates[0], coordinates[1]);
+        addMarker(userLocation, name);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
 
+    }
+
+    private void addMarker(LatLng userLocation, String name) {
+        googleMap.addMarker(new MarkerOptions().position(userLocation).title(name));
     }
 }
