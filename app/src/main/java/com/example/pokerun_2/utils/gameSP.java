@@ -56,6 +56,9 @@ public class gameSP {
                 else break;
                 counter++;
             }
+        else
+            for (UserHighScore user:userHighScores)
+                    highScores.add(user);
         String json = gson.toJson(highScores);
         editor = preferences.edit();
         editor.putString(USER_RECORDS, json);

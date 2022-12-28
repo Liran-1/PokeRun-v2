@@ -318,6 +318,7 @@ public class BigGameActivity extends AppCompatActivity {
             updateCollision(GameManager.OBSTACLE_CODE);
 
         } else if (gameManager.getGain()){
+            gameManager.addPointsToScore(GameManager.SCORE_CODE_POINTS);
             updateCollision(gameManager.SCORE_CODE);
         }
         gameManager.setHit(false);

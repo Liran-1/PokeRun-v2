@@ -105,7 +105,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     .makeText(this, message, Toast.LENGTH_SHORT);
             toaster.show();
             return null;
-        } else if (!username.equals(annoyedUsername) )
+        } else if (!TextUtils.isEmpty(welcome_ETXT_name.getText()) && !username.equals(annoyedUsername))
             username = welcome_ETXT_name.getText().toString();
         else if (annoyedCounter == 0) {
             String message = "Okay, your name is " + annoyedUsername;
